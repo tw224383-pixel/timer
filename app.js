@@ -2,11 +2,31 @@
    学校用くまタイマー - アプリケーションロジック
    ========================================== */
 
-// Service Worker Registration
+// Service Worker Registration & Automatic Update Listener
 if ('serviceWorker' in navigator) {
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
+  });
+
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Service Worker Registered!', reg.scope))
+      .then(reg => {
+        console.log('Service Worker Registered!', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('New Service Worker version installed and active.');
+              }
+            });
+          }
+        });
+      })
       .catch(err => console.log('Service Worker registration failed:', err));
   });
 }
@@ -39,9 +59,11 @@ const iconSoundOnEl = document.getElementById('icon-sound-on');
 const iconSoundOffEl = document.getElementById('icon-sound-off');
 const selectAlarmSoundEl = document.getElementById('select-alarm-sound');
 const btnFullscreenEl = document.getElementById('btn-fullscreen');
-const presetCards = document.querySelectorAll('.preset-card');
 const charBtns = document.querySelectorAll('.char-btn');
 const charGroups = document.querySelectorAll('.char-group');
+const btnToggleEditorEl = document.getElementById('btn-toggle-editor');
+const presetEditorPanelEl = document.getElementById('preset-editor-panel');
+const presetEditorFormEl = document.getElementById('preset-editor-form');
 const btnCustomSetEl = document.getElementById('btn-custom-set');
 const adjustMinDownEl = document.getElementById('adjust-min-down');
 const adjustMinUpEl = document.getElementById('adjust-min-up');
@@ -318,20 +340,75 @@ function stopConfetti() {
    Theme and Preset Customization
    ========================================== */
 
-function applyPreset(card) {
-  // Update active state in UI
-  presetCards.forEach(c => c.classList.remove('active'));
-  card.classList.add('active');
+const DEFAULT_PRESETS = [
+  { emoji: '🏃', label: 'やすみじかん', minutes: 10, theme: 'default' },
+  { emoji: '🌈', label: 'レインボータイム', minutes: 15, theme: 'rainbow' },
+  { emoji: '🍞', label: '給食終了まであと', minutes: 20, theme: 'lunch' },
+  { emoji: '⏱️', label: 'ミニワーク', minutes: 5, theme: 'default' }
+];
 
-  const seconds = parseInt(card.dataset.time, 10);
-  const label = card.dataset.label;
-  const theme = card.dataset.theme;
+let customPresets = [];
 
-  totalTime = seconds;
-  currentLabel = label;
-  currentTheme = theme;
+function loadPresets() {
+  const saved = localStorage.getItem('saved-presets');
+  if (saved) {
+    try {
+      customPresets = JSON.parse(saved);
+    } catch (e) {
+      console.error("Error parsing saved presets", e);
+      customPresets = JSON.parse(JSON.stringify(DEFAULT_PRESETS));
+    }
+  } else {
+    customPresets = JSON.parse(JSON.stringify(DEFAULT_PRESETS));
+  }
+}
+
+function renderPresets() {
+  const container = document.getElementById('presets-grid-container');
+  if (!container) return;
+  container.innerHTML = '';
   
-  applyTheme(theme, label);
+  customPresets.forEach((preset, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'preset-card';
+    if (preset.theme === 'rainbow') btn.classList.add('preset-rainbow');
+    if (preset.theme === 'lunch') btn.classList.add('preset-lunch');
+    btn.dataset.index = index;
+    
+    // Check if currently active
+    const isActive = (totalTime === preset.minutes * 60 && currentLabel === preset.label && currentTheme === preset.theme);
+    if (isActive) {
+      btn.classList.add('active');
+    }
+    
+    btn.innerHTML = `
+      <span class="preset-icon">${preset.emoji}</span>
+      <span class="preset-name">${preset.label}</span>
+      <span class="preset-duration">${preset.minutes}ふん</span>
+    `;
+    
+    btn.addEventListener('click', () => {
+      applyPresetByIndex(index);
+    });
+    
+    container.appendChild(btn);
+  });
+}
+
+function applyPresetByIndex(index) {
+  // Update active state in UI
+  const cards = document.querySelectorAll('.preset-card');
+  cards.forEach(c => c.classList.remove('active'));
+  
+  const clickedCard = document.querySelector(`.preset-card[data-index="${index}"]`);
+  if (clickedCard) clickedCard.classList.add('active');
+
+  const preset = customPresets[index];
+  totalTime = preset.minutes * 60;
+  currentLabel = preset.label;
+  currentTheme = preset.theme;
+
+  applyTheme(preset.theme, preset.label);
   resetTimer();
 }
 
@@ -394,13 +471,6 @@ btnVolumeEl.addEventListener('click', () => {
   }
 });
 
-// Preset Buttons
-presetCards.forEach((card) => {
-  card.addEventListener('click', () => {
-    applyPreset(card);
-  });
-});
-
 // Fullscreen Button
 btnFullscreenEl.addEventListener('click', () => {
   if (!document.fullscreenElement) {
@@ -430,7 +500,8 @@ adjustMinUpEl.addEventListener('click', () => {
 
 btnCustomSetEl.addEventListener('click', () => {
   // Clear preset selection
-  presetCards.forEach(c => c.classList.remove('active'));
+  const cards = document.querySelectorAll('.preset-card');
+  cards.forEach(c => c.classList.remove('active'));
   
   totalTime = customMin * 60;
   currentLabel = 'わだしょうがっこうタイマー';
@@ -482,14 +553,104 @@ charBtns.forEach((btn) => {
   });
 });
 
-// Initial Setup
-// Select the "やすみじかん (10分)" preset by default
-const defaultPreset = document.querySelector('[data-label="やすみじかん"]');
-if (defaultPreset) {
-  applyPreset(defaultPreset);
-} else {
-  updateDisplay();
+// Toggle Preset Editor
+btnToggleEditorEl.addEventListener('click', () => {
+  presetEditorPanelEl.classList.toggle('hidden');
+  if (!presetEditorPanelEl.classList.contains('hidden')) {
+    populateEditor();
+  }
+});
+
+function populateEditor() {
+  const rows = document.querySelectorAll('.editor-row');
+  rows.forEach((row) => {
+    const index = parseInt(row.dataset.index, 10);
+    const preset = customPresets[index];
+    if (preset) {
+      row.querySelector('.edit-emoji').value = preset.emoji;
+      row.querySelector('.edit-label').value = preset.label;
+      row.querySelector('.edit-time').value = preset.minutes;
+      row.querySelector('.edit-theme').value = preset.theme;
+    }
+  });
 }
+
+// Preset Editor Form Submit
+presetEditorFormEl.addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const rows = document.querySelectorAll('.editor-row');
+  const newPresets = [];
+  
+  rows.forEach((row) => {
+    const emoji = row.querySelector('.edit-emoji').value.trim() || '⏱️';
+    const label = row.querySelector('.edit-label').value.trim();
+    const minutes = parseInt(row.querySelector('.edit-time').value, 10) || 5;
+    const theme = row.querySelector('.edit-theme').value;
+    
+    newPresets.push({
+      emoji: emoji,
+      label: label,
+      minutes: minutes,
+      theme: theme
+    });
+  });
+  
+  customPresets = newPresets;
+  localStorage.setItem('saved-presets', JSON.stringify(customPresets));
+  
+  // Re-render presets
+  renderPresets();
+  
+  // Close editor panel
+  presetEditorPanelEl.classList.add('hidden');
+  
+  // Play a pleasant feedback note
+  initAudio();
+  playBellNote(783.99, audioCtx.currentTime, 0.4);
+});
+
+// Force Reset Button Logic (Clears LocalStorage, SW registration, and Caches)
+const btnForceResetEl = document.getElementById('btn-force-reset');
+if (btnForceResetEl) {
+  btnForceResetEl.addEventListener('click', async () => {
+    const confirmReset = confirm("設定とキャッシュをすべてクリアして、アプリを最新状態に初期化しますか？");
+    if (!confirmReset) return;
+    
+    try {
+      // 1. Clear LocalStorage
+      localStorage.clear();
+      
+      // 2. Unregister Service Workers
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (let registration of registrations) {
+          await registration.unregister();
+        }
+      }
+      
+      // 3. Clear Cache Storage
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        for (let key of keys) {
+          await caches.delete(key);
+        }
+      }
+    } catch (err) {
+      console.error("Error during force reset:", err);
+    }
+    
+    // 4. Force reload from server
+    window.location.reload(true);
+  });
+}
+
+// Initial Setup
+loadPresets();
+renderPresets();
+
+// Select the first preset by default
+applyPresetByIndex(0);
 
 // Load saved character selection
 const savedChar = localStorage.getItem('selected-character') || 'bear';

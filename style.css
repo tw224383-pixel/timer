@@ -678,17 +678,14 @@ body {
     font-size: 4rem;
   }
   
-  .controls-section {
+  .sidebar-right {
     grid-column: 2;
     grid-row: 2;
     align-self: start;
-    gap: 25px;
     padding: 0 10px;
-  }
-  
-  .presets-section {
-    grid-column: 1 / span 2;
-    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 }
 
@@ -778,23 +775,29 @@ body {
   display: none !important;
 }
 
-/* Character Specific Eye Color Styles (via CSS Variables) */
-.char-active-bear {
-  --eye-color: #4A2E1B;
-  --eye-stroke: #4A2E1B;
-  --eye-highlight: #FFFFFF;
+/* Character Specific Eye Color Styles - Explicit CSS Override for Cross-Browser/WebKit Compatibility */
+.char-active-bear .eye-main,
+.char-active-chick .eye-main {
+  fill: #4A2E1B !important;
+}
+.char-active-bear .eye-glint,
+.char-active-chick .eye-glint {
+  fill: #FFFFFF !important;
+}
+.char-active-bear .eye-path,
+.char-active-chick .eye-path {
+  stroke: #4A2E1B !important;
 }
 
-.char-active-chick {
-  --eye-color: #4A2E1B;
-  --eye-stroke: #4A2E1B;
-  --eye-highlight: #FFFFFF;
+/* Panda: White outer/eyes on black patches */
+.char-active-panda .eye-main {
+  fill: #FFFFFF !important;
 }
-
-.char-active-panda {
-  --eye-color: #FFFFFF;
-  --eye-stroke: #FFFFFF;
-  --eye-highlight: #2D3436;
+.char-active-panda .eye-glint {
+  fill: #2D3436 !important;
+}
+.char-active-panda .eye-path {
+  stroke: #FFFFFF !important;
 }
 
 /* Chick Wing Flapping Animation on Running State */
@@ -815,4 +818,220 @@ body {
 @keyframes chick-flap-right {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(-15deg); }
+}
+
+/* ==========================================
+   Sidebar and Preset Editor Styles
+   ========================================== */
+
+/* Sidebar Right Container (Portrait default) */
+.sidebar-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Preset Editor Styles */
+.preset-editor-wrapper {
+  margin-top: 15px;
+  border-top: 2px dashed var(--border-color);
+  padding-top: 15px;
+  width: 100%;
+}
+
+.editor-toggle-btn {
+  background: #FFF9F3;
+  border: 2px dashed var(--border-color);
+  border-radius: 14px;
+  padding: 8px 16px;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.editor-toggle-btn:hover {
+  background: #FFEAD2;
+  color: var(--text-main);
+  border-color: var(--primary-color);
+}
+
+.editor-toggle-btn:active {
+  transform: scale(0.98);
+}
+
+.preset-editor-panel {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 16px;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 8px 24px rgba(141, 123, 104, 0.08);
+}
+
+.preset-editor-panel.hidden {
+  display: none !important;
+}
+
+.editor-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--text-main);
+  text-align: center;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+}
+
+#preset-editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editor-row {
+  display: grid;
+  grid-template-columns: 18px 38px 1fr 50px 85px;
+  gap: 6px;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px dotted var(--border-color);
+}
+
+.editor-row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.row-num {
+  font-weight: 900;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.edit-emoji {
+  width: 100%;
+  height: 34px;
+  text-align: center;
+  font-size: 1.1rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2px;
+  background: #FFFFFF;
+}
+
+.edit-label {
+  width: 100%;
+  height: 34px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  background: #FFFFFF;
+}
+
+.edit-time {
+  width: 100%;
+  height: 34px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2px;
+  background: #FFFFFF;
+  -moz-appearance: textfield;
+}
+
+.edit-time::-webkit-outer-spin-button,
+.edit-time::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.edit-theme {
+  width: 100%;
+  height: 34px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  padding: 4px;
+  font-family: var(--font-family);
+  font-size: 0.80rem;
+  font-weight: 700;
+  color: var(--text-main);
+  background: #FFFFFF;
+  cursor: pointer;
+}
+
+.btn-save-presets {
+  background-color: var(--success-color);
+  color: var(--text-main);
+  border: 3px solid #FFFFFF;
+  border-radius: 16px;
+  padding: 12px;
+  font-family: var(--font-family);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-save-presets:hover {
+  background-color: #A3D896;
+  transform: translateY(-2px);
+}
+
+.btn-save-presets:active {
+  transform: scale(0.97);
+}
+
+/* Force Reset Button Styles */
+.force-reset-container {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color);
+  text-align: center;
+}
+
+.btn-force-reset {
+  background: #FFF0F0;
+  border: 2px dashed #FF8B94;
+  color: #D32F2F;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-force-reset:hover {
+  background: #FFE5E5;
+  border-color: #D32F2F;
+}
+
+.btn-force-reset:active {
+  transform: scale(0.97);
 }

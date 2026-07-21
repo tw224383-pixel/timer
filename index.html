@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>わだしょうがっこうタイマー</title>
   
+  <!-- Cache Control Meta Tags to prevent stale HTML -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <!-- PWA & iOS standalone meta tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -145,34 +150,34 @@
               <circle cx="192" cy="188" r="10" fill="#FFAAA6" opacity="0.8" />
             </g>
 
-            <!-- Shared Eyes (Styled using variables) -->
+            <!-- Shared Eyes (Cross-browser compatible with fallback colors & CSS overrides) -->
             <g class="bear-face">
               <!-- Normal Eyes -->
               <g id="eye-normal" class="bear-eye">
-                <circle cx="122" cy="168" r="6.5" fill="var(--eye-color)" />
-                <circle cx="120" cy="165" r="2" fill="var(--eye-highlight)" />
-                <circle cx="178" cy="168" r="6.5" fill="var(--eye-color)" />
-                <circle cx="176" cy="165" r="2" fill="var(--eye-highlight)" />
+                <circle class="eye-main" cx="122" cy="168" r="6.5" fill="#4A2E1B" />
+                <circle class="eye-glint" cx="120" cy="165" r="2" fill="#FFFFFF" />
+                <circle class="eye-main" cx="178" cy="168" r="6.5" fill="#4A2E1B" />
+                <circle class="eye-glint" cx="176" cy="165" r="2" fill="#FFFFFF" />
               </g>
               <!-- Sleeping Eyes -->
               <g id="eye-sleep" class="bear-eye hide">
-                <path d="M 114,170 Q 122,176 130,170" fill="none" stroke="var(--eye-stroke)" stroke-width="4" stroke-linecap="round" />
-                <path d="M 170,170 Q 178,176 186,170" fill="none" stroke="var(--eye-stroke)" stroke-width="4" stroke-linecap="round" />
+                <path class="eye-path" d="M 114,170 Q 122,176 130,170" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
+                <path class="eye-path" d="M 170,170 Q 178,176 186,170" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
               </g>
               <!-- Panic/Hurry Eyes -->
               <g id="eye-panic" class="bear-eye hide">
-                <circle cx="122" cy="168" r="8" fill="var(--eye-color)" />
-                <circle cx="122" cy="168" r="3" fill="var(--eye-highlight)" />
-                <circle cx="178" cy="168" r="8" fill="var(--eye-color)" />
-                <circle cx="178" cy="168" r="3" fill="var(--eye-highlight)" />
+                <circle class="eye-main" cx="122" cy="168" r="8" fill="#4A2E1B" />
+                <circle class="eye-glint" cx="122" cy="168" r="3" fill="#FFFFFF" />
+                <circle class="eye-main" cx="178" cy="168" r="8" fill="#4A2E1B" />
+                <circle class="eye-glint" cx="178" cy="168" r="3" fill="#FFFFFF" />
                 <!-- Sweats -->
                 <path d="M 98,155 Q 94,160 92,165" fill="none" stroke="#85E3FF" stroke-width="3" stroke-linecap="round" />
                 <path d="M 202,155 Q 206,160 208,165" fill="none" stroke="#85E3FF" stroke-width="3" stroke-linecap="round" />
               </g>
               <!-- Happy/Cheering Eyes -->
               <g id="eye-happy" class="bear-eye hide">
-                <path d="M 114,172 Q 122,162 130,172" fill="none" stroke="var(--eye-stroke)" stroke-width="4" stroke-linecap="round" />
-                <path d="M 170,172 Q 178,162 186,172" fill="none" stroke="var(--eye-stroke)" stroke-width="4" stroke-linecap="round" />
+                <path class="eye-path" d="M 114,172 Q 122,162 130,172" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
+                <path class="eye-path" d="M 170,172 Q 178,162 186,172" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
               </g>
             </g>
 
@@ -206,99 +211,169 @@
       </div>
     </main>
 
-    <!-- Interactive Timer Controls -->
-    <section class="controls-section">
-      <div class="main-buttons">
-        <button id="btn-reset" class="control-btn btn-secondary" aria-label="リセット">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          <span>リセット</span>
-        </button>
-
-        <button id="btn-play-pause" class="control-btn btn-primary" aria-label="スタート">
-          <!-- Play Icon -->
-          <svg id="icon-play" viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          <!-- Pause Icon -->
-          <svg id="icon-pause" class="hide" viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-          <span id="txt-play-pause">スタート</span>
-        </button>
-      </div>
-
-      <div class="settings-row">
-        <!-- Sound selection -->
-        <div class="audio-control">
-          <button id="btn-volume" class="sound-toggle-btn" aria-label="消音切替">
-            <svg id="icon-sound-on" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-            <svg id="icon-sound-off" class="hide" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+    <!-- Right Sidebar containing Controls and Presets -->
+    <div class="sidebar-right">
+      <!-- Interactive Timer Controls -->
+      <section class="controls-section">
+        <div class="main-buttons">
+          <button id="btn-reset" class="control-btn btn-secondary" aria-label="リセット">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span>リセット</span>
           </button>
-          <select id="select-alarm-sound" class="sound-select">
-            <option value="school-chime">🔔 がっこうのチャイム</option>
-            <option value="bell">⏰ めざましベル</option>
-            <option value="music-box">🎵 オルゴール</option>
-          </select>
+
+          <button id="btn-play-pause" class="control-btn btn-primary" aria-label="スタート">
+            <!-- Play Icon -->
+            <svg id="icon-play" viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <!-- Pause Icon -->
+            <svg id="icon-pause" class="hide" viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            <span id="txt-play-pause">スタート</span>
+          </button>
         </div>
 
-        <button id="btn-fullscreen" class="fullscreen-btn" aria-label="全画面表示">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-        </button>
-      </div>
+        <div class="settings-row">
+          <!-- Sound selection -->
+          <div class="audio-control">
+            <button id="btn-volume" class="sound-toggle-btn" aria-label="消音切替">
+              <svg id="icon-sound-on" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <svg id="icon-sound-off" class="hide" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            </button>
+            <select id="select-alarm-sound" class="sound-select">
+              <option value="school-chime">🔔 がっこうのチャイム</option>
+              <option value="bell">⏰ めざましベル</option>
+              <option value="music-box">🎵 オルゴール</option>
+            </select>
+          </div>
 
-      <!-- Character Selector -->
-      <div class="character-select-box">
-        <h3 class="char-select-title">キャラクターをえらぶ</h3>
-        <div class="char-options">
-          <button class="char-btn active" data-char="bear" aria-label="くま">🐻 <span>くま</span></button>
-          <button class="char-btn" data-char="chick" aria-label="ひよこ">🐥 <span>ひよこ</span></button>
-          <button class="char-btn" data-char="panda" aria-label="パンダ">🐼 <span>パンダ</span></button>
+          <button id="btn-fullscreen" class="fullscreen-btn" aria-label="全画面表示">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          </button>
         </div>
-      </div>
-    </section>
 
-    <!-- Presets Section -->
-    <section class="presets-section">
-      <h2 class="section-title">かんたんじかん設定</h2>
-      <div class="presets-grid">
-        <!-- School Core Presets -->
+        <!-- Character Selector -->
+        <div class="character-select-box">
+          <h3 class="char-select-title">キャラクターをえらぶ</h3>
+          <div class="char-options">
+            <button class="char-btn active" data-char="bear" aria-label="くま">🐻 <span>くま</span></button>
+            <button class="char-btn" data-char="chick" aria-label="ひよこ">🐥 <span>ひよこ</span></button>
+            <button class="char-btn" data-char="panda" aria-label="パンダ">🐼 <span>パンダ</span></button>
+          </div>
+        </div>
+      </section>
 
-
-        <button class="preset-card" data-time="600" data-label="やすみじかん" data-theme="default">
-          <span class="preset-icon">🏃</span>
-          <span class="preset-name">やすみじかん</span>
-          <span class="preset-duration">10ぷん</span>
-        </button>
-
-        <!-- Rainbow Time -->
-        <button class="preset-card preset-rainbow" data-time="900" data-label="レインボータイム" data-theme="rainbow">
-          <span class="preset-icon">🌈</span>
-          <span class="preset-name">レインボー</span>
-          <span class="preset-duration">15ふん</span>
-        </button>
-
-        <!-- Lunch End -->
-        <button class="preset-card preset-lunch" data-time="1200" data-label="給食終了まであと" data-theme="lunch">
-          <span class="preset-icon">🍞</span>
-          <span class="preset-name">きゅうしょく</span>
-          <span class="preset-duration">20ふん</span>
-        </button>
+      <!-- Presets Section -->
+      <section class="presets-section">
+        <h2 class="section-title">かんたんじかん設定</h2>
         
-        <button class="preset-card" data-time="300" data-label="ミニワーク" data-theme="default">
-          <span class="preset-icon">⏱️</span>
-          <span class="preset-name">ミニワーク</span>
-          <span class="preset-duration">5ふん</span>
-        </button>
-      </div>
-
-      <!-- Custom Adjuster -->
-      <div class="custom-adjuster">
-        <span class="adjuster-label">じぶんで決める：</span>
-        <div class="adjuster-controls">
-          <button id="adjust-min-down" class="adjust-btn">−</button>
-          <span id="custom-minutes" class="adjust-val">10</span>
-          <span class="adjust-unit">分</span>
-          <button id="adjust-min-up" class="adjust-btn">+</button>
+        <!-- Grid containing 4 Preset Buttons (updated dynamically by app.js) -->
+        <div class="presets-grid" id="presets-grid-container">
+          <button class="preset-card active" data-index="0">
+            <span class="preset-icon">🏃</span>
+            <span class="preset-name">やすみじかん</span>
+            <span class="preset-duration">10ぷん</span>
+          </button>
+          <button class="preset-card" data-index="1">
+            <span class="preset-icon">🌈</span>
+            <span class="preset-name">レインボー</span>
+            <span class="preset-duration">15ふん</span>
+          </button>
+          <button class="preset-card" data-index="2">
+            <span class="preset-icon">🍞</span>
+            <span class="preset-name">きゅうしょく</span>
+            <span class="preset-duration">20ふん</span>
+          </button>
+          <button class="preset-card" data-index="3">
+            <span class="preset-icon">⏱️</span>
+            <span class="preset-name">ミニワーク</span>
+            <span class="preset-duration">5ふん</span>
+          </button>
         </div>
-        <button id="btn-custom-set" class="btn-custom-apply">セットする</button>
-      </div>
-    </section>
+
+        <!-- Custom Adjuster -->
+        <div class="custom-adjuster">
+          <span class="adjuster-label">じぶんで決める：</span>
+          <div class="adjuster-controls">
+            <button id="adjust-min-down" class="adjust-btn">−</button>
+            <span id="custom-minutes" class="adjust-val">10</span>
+            <span class="adjust-unit">分</span>
+            <button id="adjust-min-up" class="adjust-btn">+</button>
+          </div>
+          <button id="btn-custom-set" class="btn-custom-apply">セットする</button>
+        </div>
+
+        <!-- Collapsible Preset Editor Panel -->
+        <div class="preset-editor-wrapper">
+          <button id="btn-toggle-editor" class="editor-toggle-btn" type="button">
+            ⚙️ プリセットをへんしゅうする
+          </button>
+          
+          <div id="preset-editor-panel" class="preset-editor-panel hidden">
+            <h3 class="editor-title">プリセットのへんしゅう</h3>
+            <form id="preset-editor-form" onsubmit="event.preventDefault();">
+              <!-- Row for Preset 1 -->
+              <div class="editor-row" data-index="0">
+                <span class="row-num">1</span>
+                <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🏃">
+                <input type="text" class="edit-label" placeholder="なまえ" required value="やすみじかん">
+                <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="10">
+                <select class="edit-theme">
+                  <option value="default">つうじょう</option>
+                  <option value="rainbow">レインボー</option>
+                  <option value="lunch">きゅうしょく</option>
+                </select>
+              </div>
+              
+              <!-- Row for Preset 2 -->
+              <div class="editor-row" data-index="1">
+                <span class="row-num">2</span>
+                <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🌈">
+                <input type="text" class="edit-label" placeholder="なまえ" required value="レインボータイム">
+                <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="15">
+                <select class="edit-theme">
+                  <option value="default">つうじょう</option>
+                  <option value="rainbow" selected>レインボー</option>
+                  <option value="lunch">きゅうしょく</option>
+                </select>
+              </div>
+              
+              <!-- Row for Preset 3 -->
+              <div class="editor-row" data-index="2">
+                <span class="row-num">3</span>
+                <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🍞">
+                <input type="text" class="edit-label" placeholder="なまえ" required value="給食終了まであと">
+                <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="20">
+                <select class="edit-theme">
+                  <option value="default">つうじょう</option>
+                  <option value="rainbow">レインボー</option>
+                  <option value="lunch" selected>きゅうしょく</option>
+                </select>
+              </div>
+              
+              <!-- Row for Preset 4 -->
+              <div class="editor-row" data-index="3">
+                <span class="row-num">4</span>
+                <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="⏱️">
+                <input type="text" class="edit-label" placeholder="なまえ" required value="ミニワーク">
+                <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="5">
+                <select class="edit-theme">
+                  <option value="default" selected>つうじょう</option>
+                  <option value="rainbow">レインボー</option>
+                  <option value="lunch">きゅうしょく</option>
+                </select>
+              </div>
+              
+              <button type="submit" class="btn-save-presets">設定をほぞんする</button>
+            </form>
+            
+            <!-- Force Reset Cache and LocalStorage -->
+            <div class="force-reset-container">
+              <button id="btn-force-reset" class="btn-force-reset" type="button">
+                🔄 キャッシュと設定をリセット
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 
   <script src="./app.js"></script>
