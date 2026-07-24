@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cute-bear-timer-v2';
+const CACHE_NAME = 'cute-bear-timer-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -14,7 +14,7 @@ self.addEventListener('install', (e) => {
   self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Caching assets for v2');
+      console.log('Caching assets for v4 (split-files)');
       return cache.addAll(ASSETS);
     })
   );

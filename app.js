@@ -43,7 +43,7 @@ let isMuted = false;
 // Audio Context
 let audioCtx = null;
 
-// DOM Elements
+// DOM Elements (Bear Timer)
 const bodyEl = document.body;
 const timerTitleEl = document.getElementById('timer-title');
 const timeDisplayEl = document.getElementById('time-display');
@@ -59,6 +59,7 @@ const iconSoundOnEl = document.getElementById('icon-sound-on');
 const iconSoundOffEl = document.getElementById('icon-sound-off');
 const selectAlarmSoundEl = document.getElementById('select-alarm-sound');
 const btnFullscreenEl = document.getElementById('btn-fullscreen');
+
 const charBtns = document.querySelectorAll('.char-btn');
 const charGroups = document.querySelectorAll('.char-group');
 const btnToggleEditorEl = document.getElementById('btn-toggle-editor');
@@ -68,9 +69,6 @@ const btnCustomSetEl = document.getElementById('btn-custom-set');
 const adjustMinDownEl = document.getElementById('adjust-min-down');
 const adjustMinUpEl = document.getElementById('adjust-min-up');
 const customMinutesEl = document.getElementById('custom-minutes');
-
-// State variables for character
-let activeCharacter = 'bear';
 
 // Accessories SVG Groups
 const bearRainbowHat = document.getElementById('bear-rainbow-hat');
@@ -85,6 +83,9 @@ const eyeHappy = document.getElementById('eye-happy');
 // Confetti Container
 const confettiContainer = document.getElementById('confetti');
 
+// State variables for character
+let activeCharacter = 'bear';
+
 // Audio setup trigger
 function initAudio() {
   if (!audioCtx) {
@@ -96,7 +97,7 @@ function initAudio() {
 }
 
 /* ==========================================
-   Timer core logic
+   Timer core logic (Bear Timer)
    ========================================== */
 
 function updateDisplay() {
@@ -337,7 +338,7 @@ function stopConfetti() {
 }
 
 /* ==========================================
-   Theme and Preset Customization
+   Theme and Preset Customization (Bear Timer)
    ========================================== */
 
 const DEFAULT_PRESETS = [
@@ -413,6 +414,9 @@ function applyPresetByIndex(index) {
 }
 
 function applyTheme(theme, label) {
+  // If Step Timer view is active, skip theme modifications on body
+  if (document.body.classList.contains('mode-step-timer')) return;
+
   // Reset themes on body
   bodyEl.classList.remove('theme-default', 'theme-rainbow', 'theme-lunch');
   bodyEl.classList.add(`theme-${theme}`);
@@ -441,7 +445,7 @@ function applyTheme(theme, label) {
 }
 
 /* ==========================================
-   Event Listeners and Interactive Hooks
+   Event Listeners and Interactive Hooks (Bear Timer)
    ========================================== */
 
 // Play / Pause Button
@@ -645,13 +649,336 @@ if (btnForceResetEl) {
   });
 }
 
-// Initial Setup
-loadPresets();
-renderPresets();
+// Bear Timer Initial Setup Hook
+function initBearTimer() {
+  loadPresets();
+  renderPresets();
 
-// Select the first preset by default
-applyPresetByIndex(0);
+  // Select the first preset by default
+  applyPresetByIndex(0);
 
-// Load saved character selection
-const savedChar = localStorage.getItem('selected-character') || 'bear';
-selectCharacter(savedChar);
+  // Load saved character selection
+  const savedChar = localStorage.getItem('selected-character') || 'bear';
+  selectCharacter(savedChar);
+}
+
+
+/* ========================================================
+   自習用ステップタイマー - ロジック
+   ======================================================== */
+
+// Default steps updated: 「計算ドリル」「漢字ドリル」「読書」
+let steps = [
+  { emoji: '🧮', label: '計算ドリル', minutes: 10, theme: 'default' },
+  { emoji: '✍️', label: '漢字ドリル', minutes: 10, theme: 'default' },
+  { emoji: '📖', label: '読書', minutes: 10, theme: 'default' }
+];
+let currentStepIndex = 0;
+let stepTimeLeft = 0;
+let stepIsRunning = false;
+let stepTimerInterval = null;
+
+// View Switching Listeners
+const btnSwitchToStepEl = document.getElementById('btn-switch-to-step');
+const btnSwitchToBearEl = document.getElementById('btn-switch-to-bear');
+
+btnSwitchToStepEl.addEventListener('click', () => {
+  // Pause bear timer if active
+  pauseTimer();
+  document.body.classList.add('mode-step-timer');
+  document.body.classList.remove('theme-default', 'theme-rainbow', 'theme-lunch');
+  document.getElementById('timer-container-wrapper').classList.add('view-step-timer');
+  btnSwitchToStepEl.classList.add('hide');
+  btnSwitchToBearEl.classList.remove('hide');
+  loadStepSetup();
+});
+
+btnSwitchToBearEl.addEventListener('click', () => {
+  // Pause step timer if active
+  pauseStepTimer();
+  document.body.classList.remove('mode-step-timer');
+  document.getElementById('timer-container-wrapper').classList.remove('view-step-timer');
+  btnSwitchToBearEl.classList.add('hide');
+  btnSwitchToStepEl.classList.remove('hide');
+  // restore bear theme
+  applyTheme(currentTheme, currentLabel);
+});
+
+// Load setup list from localStorage
+function loadStepSetup() {
+  const saved = localStorage.getItem('saved-step-timer-steps');
+  if (saved) {
+    try {
+      steps = JSON.parse(saved);
+    } catch (e) {
+      console.error("Error loading steps", e);
+    }
+  }
+  renderSetupRows();
+  
+  // Show setup, hide running elements
+  document.getElementById('step-settings-panel').classList.remove('hide');
+  document.getElementById('step-running-panel').classList.add('hide');
+  document.getElementById('step-flow-panel').classList.add('hide');
+}
+
+function renderSetupRows() {
+  const container = document.getElementById('step-rows-container');
+  container.innerHTML = '';
+  
+  steps.forEach((step, idx) => {
+    const row = document.createElement('div');
+    row.className = 'step-setup-row';
+    row.dataset.index = idx;
+    
+    row.innerHTML = `
+      <span class="step-num">${idx + 1}</span>
+      <input type="text" class="input-step-label" placeholder="やること" value="${step.label}" required>
+      <input type="number" class="input-step-time" placeholder="時間" value="${step.minutes}" min="1" max="120" required>
+      <button class="btn-delete-row" type="button">🗑️</button>
+    `;
+    
+    // Delete button listener
+    row.querySelector('.btn-delete-row').addEventListener('click', () => {
+      deleteStepRow(idx);
+    });
+    
+    container.appendChild(row);
+  });
+}
+
+function deleteStepRow(index) {
+  syncStepsFromUI();
+  steps.splice(index, 1);
+  renderSetupRows();
+}
+
+function syncStepsFromUI() {
+  const rows = document.querySelectorAll('.step-setup-row');
+  steps = [];
+  rows.forEach((row) => {
+    const label = row.querySelector('.input-step-label').value.trim() || '自主学習';
+    const minutes = parseInt(row.querySelector('.input-step-time').value, 10) || 10;
+    steps.push({ emoji: '⏱️', label, minutes, theme: 'default' });
+  });
+}
+
+// Add Step Row button
+document.getElementById('btn-add-step-row').addEventListener('click', () => {
+  syncStepsFromUI();
+  steps.push({ emoji: '⏱️', label: '', minutes: 10, theme: 'default' });
+  renderSetupRows();
+});
+
+// Form submit listener (Start timer)
+document.getElementById('step-setup-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  syncStepsFromUI();
+  
+  if (steps.length === 0) {
+    alert('ステップを1つ以上追加してください！');
+    return;
+  }
+  
+  // Save configuration to localStorage
+  localStorage.setItem('saved-step-timer-steps', JSON.stringify(steps));
+  
+  // Show running view, hide settings view
+  document.getElementById('step-settings-panel').classList.add('hide');
+  document.getElementById('step-running-panel').classList.remove('hide');
+  document.getElementById('step-flow-panel').classList.remove('hide');
+  
+  startStepRunningPhase();
+});
+
+function startStepRunningPhase() {
+  currentStepIndex = 0;
+  stepTimeLeft = steps[currentStepIndex].minutes * 60;
+  stepIsRunning = false;
+  
+  // Reset play button icon/text
+  document.getElementById('btn-step-play-pause').innerHTML = `
+    <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    <span>スタート</span>
+  `;
+  document.getElementById('step-giant-card').classList.remove('all-finished');
+  
+  updateStepDisplay();
+}
+
+function updateStepDisplay() {
+  renderStepFlowList();
+  
+  if (currentStepIndex >= steps.length) {
+    // All steps finished!
+    document.getElementById('current-step-label').textContent = 'しゅうりょう！';
+    document.getElementById('step-time-display').textContent = 'おわり';
+    document.getElementById('step-giant-card').classList.add('all-finished');
+    const totalTimeEl = document.getElementById('step-total-time-display');
+    if (totalTimeEl) totalTimeEl.textContent = '全体ののこり 00:00';
+    document.getElementById('btn-step-play-pause').innerHTML = `
+      <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <span>スタート</span>
+    `;
+    return;
+  }
+  
+  const step = steps[currentStepIndex];
+  document.getElementById('current-step-label').textContent = step.label;
+  
+  const mins = Math.floor(stepTimeLeft / 60);
+  const secs = stepTimeLeft % 60;
+  document.getElementById('step-time-display').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  
+  // Calculate total remaining time
+  let totalSecondsLeft = stepTimeLeft;
+  for (let i = currentStepIndex + 1; i < steps.length; i++) {
+    totalSecondsLeft += steps[i].minutes * 60;
+  }
+  
+  const totalMins = Math.floor(totalSecondsLeft / 60);
+  const totalSecs = totalSecondsLeft % 60;
+  const totalTimeEl = document.getElementById('step-total-time-display');
+  if (totalTimeEl) {
+    totalTimeEl.textContent = `全体ののこり ${String(totalMins).padStart(2, '0')}:${String(totalSecs).padStart(2, '0')}`;
+  }
+}
+
+function renderStepFlowList() {
+  const container = document.getElementById('step-flow-container');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  steps.forEach((step, idx) => {
+    const item = document.createElement('div');
+    item.className = 'flow-item';
+    
+    if (idx < currentStepIndex) {
+      item.classList.add('done');
+      item.innerHTML = `
+        <div class="flow-left">
+          <span class="flow-idx">✓</span>
+          <span class="flow-task-name">${step.label}</span>
+        </div>
+        <span class="flow-badge">✅ おわり</span>
+      `;
+    } else if (idx === currentStepIndex) {
+      item.classList.add('active');
+      item.innerHTML = `
+        <div class="flow-left">
+          <span class="flow-idx">▶</span>
+          <span class="flow-task-name">${step.label}</span>
+        </div>
+        <span class="flow-badge">${step.minutes}分</span>
+      `;
+    } else {
+      item.classList.add('pending');
+      item.innerHTML = `
+        <div class="flow-left">
+          <span class="flow-idx">${idx + 1}</span>
+          <span class="flow-task-name">${step.label}</span>
+        </div>
+        <span class="flow-badge">${step.minutes}分</span>
+      `;
+    }
+    
+    container.appendChild(item);
+  });
+}
+
+// Step Timer play/pause trigger
+document.getElementById('btn-step-play-pause').addEventListener('click', () => {
+  initAudio();
+  
+  if (currentStepIndex >= steps.length) {
+    // Restart from beginning if finished
+    startStepRunningPhase();
+    return;
+  }
+  
+  if (stepIsRunning) {
+    pauseStepTimer();
+  } else {
+    startStepTimer();
+  }
+});
+
+function startStepTimer() {
+  if (stepIsRunning) return;
+  stepIsRunning = true;
+  
+  document.getElementById('btn-step-play-pause').innerHTML = `
+    <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    <span>ストップ</span>
+  `;
+  
+  stepTimerInterval = setInterval(() => {
+    if (stepTimeLeft > 0) {
+      stepTimeLeft--;
+      updateStepDisplay();
+    } else {
+      // Current step finished!
+      playAlarm(); // Play chime notification
+      currentStepIndex++;
+      
+      if (currentStepIndex < steps.length) {
+        // Setup next step
+        stepTimeLeft = steps[currentStepIndex].minutes * 60;
+        updateStepDisplay();
+      } else {
+        // All steps complete!
+        clearInterval(stepTimerInterval);
+        stepIsRunning = false;
+        updateStepDisplay();
+        startConfetti();
+        playMusicBox(); // Play final celebration music
+      }
+    }
+  }, 1000);
+}
+
+function pauseStepTimer() {
+  stepIsRunning = false;
+  document.getElementById('btn-step-play-pause').innerHTML = `
+    <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    <span>再開</span>
+  `;
+  clearInterval(stepTimerInterval);
+}
+
+// Back to Setup / Reset
+document.getElementById('btn-step-reset').addEventListener('click', () => {
+  pauseStepTimer();
+  document.getElementById('step-settings-panel').classList.remove('hide');
+  document.getElementById('step-running-panel').classList.add('hide');
+  document.getElementById('step-flow-panel').classList.add('hide');
+});
+
+// Step Timer Fullscreen Button Handler
+const btnStepFullscreenEl = document.getElementById('btn-step-fullscreen');
+if (btnStepFullscreenEl) {
+  btnStepFullscreenEl.addEventListener('click', () => {
+    const panel = document.getElementById('timer-container-wrapper');
+    if (!document.fullscreenElement) {
+      panel.requestFullscreen()
+        .then(() => {
+          btnStepFullscreenEl.querySelector('span').textContent = '全画面を解除';
+        })
+        .catch((err) => console.log(`Fullscreen error: ${err.message}`));
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  // Listen for fullscreen change event to update button label
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      btnStepFullscreenEl.querySelector('span').textContent = '全画面にする';
+    }
+  });
+}
+
+/* ==========================================
+   INITIAL RUNTIME BOOTSTRAP
+   ========================================== */
+initBearTimer();

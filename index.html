@@ -27,350 +27,400 @@
 </head>
 <body class="theme-default">
   
-  <div class="app-container">
+  <div class="app-container" id="timer-container-wrapper">
     <!-- Header -->
     <header class="app-header">
       <h1 id="timer-title" class="timer-title">わだしょうがっこうタイマー</h1>
+      <button id="btn-switch-to-step" class="btn-switch-mode" type="button">
+        📖 自習用タイマーにかえる
+      </button>
+      <button id="btn-switch-to-bear" class="btn-switch-mode hide" type="button" style="background-color: #FEF3C7; color: #B45309;">
+        🐻 くまタイマーにもどる
+      </button>
     </header>
 
-    <!-- Main Section (Timer and Character) -->
-    <main class="timer-main">
-      <div class="visual-container">
-        <!-- Circular Progress Track -->
-        <svg class="progress-ring" viewBox="0 0 320 320">
-          <circle class="progress-ring-bg" cx="160" cy="160" r="145" />
-          <circle id="progress-bar" class="progress-ring-bar" cx="160" cy="160" r="145" />
-        </svg>
-
-        <!-- Bear SVG Character Area -->
-        <div id="bear-character" class="bear-character state-idle">
-          <!-- Zzz Sleeping Bubbles -->
-          <div class="zzz-container">
-            <span class="zzz z1">z</span>
-            <span class="zzz z2">z</span>
-            <span class="zzz z3">z</span>
-          </div>
-
-          <!-- Confetti for Cheering -->
-          <div class="confetti-container" id="confetti"></div>
-
-          <svg viewBox="0 0 300 300" width="100%" height="100%" class="bear-svg">
-            <!-- Bear Background Elements (Rainbow Bow/Hat) -->
-            <g id="bear-rainbow-hat" class="accessory hide">
-              <!-- Rainbow Party Hat -->
-              <polygon points="150,55 125,95 175,95" fill="#FF8B94" />
-              <circle cx="150" cy="50" r="8" fill="#FFF6B3" />
-              <path d="M 125,95 Q 150,105 175,95" fill="none" stroke="#FFF6B3" stroke-width="4" />
-              <!-- Rainbow stripes on hat -->
-              <path d="M 137,75 L 163,75" stroke="#FFF6B3" stroke-width="3" />
-              <path d="M 131,85 L 169,85" stroke="#85E3FF" stroke-width="3" />
-            </g>
-
-            <!-- Character Group: Bear -->
-            <g id="char-bear" class="char-group">
-              <!-- Bear Ears -->
-              <g class="bear-ears">
-                <circle cx="100" cy="115" r="28" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
-                <circle cx="100" cy="115" r="16" fill="#F8C4B4" />
-                <circle cx="200" cy="115" r="28" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
-                <circle cx="200" cy="115" r="16" fill="#F8C4B4" />
-              </g>
-              <!-- Bear Body -->
-              <path class="bear-body" d="M 90,240 Q 150,195 210,240 L 220,280 L 80,280 Z" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
-              <!-- Bear Head -->
-              <circle class="bear-head" cx="150" cy="170" r="62" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
-              <!-- Bear Muzzle/Nose/Mouth -->
-              <ellipse cx="150" cy="188" rx="24" ry="16" fill="#F5F2E7" stroke="#8D5524" stroke-width="2.5" />
-              <ellipse cx="150" cy="180" rx="8" ry="5" fill="#4A2E1B" />
-              <path d="M 144,186 Q 150,192 150,186 Q 150,192 156,186" fill="none" stroke="#4A2E1B" stroke-width="3" stroke-linecap="round" />
-              <!-- Bear Arms (Paws) -->
-              <!-- Left Arm -->
-              <g class="bear-arm-left">
-                <path d="M 85,225 Q 50,205 60,230 Q 70,255 90,245 Z" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
-                <circle cx="62" cy="225" r="8" fill="#F8C4B4" />
-              </g>
-              <!-- Right Arm -->
-              <g class="bear-arm-right">
-                <path d="M 215,225 Q 250,205 240,230 Q 230,255 210,245 Z" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
-                <circle cx="238" cy="225" r="8" fill="#F8C4B4" />
-              </g>
-            </g>
-
-            <!-- Character Group: Chick -->
-            <g id="char-chick" class="char-group hide">
-              <!-- Chick Body -->
-              <path class="chick-body" d="M 90,240 Q 150,205 210,240 L 220,280 L 80,280 Z" fill="#FFEB60" stroke="#E59834" stroke-width="4" />
-              <!-- Chick Head -->
-              <circle class="chick-head" cx="150" cy="170" r="60" fill="#FFEB60" stroke="#E59834" stroke-width="4" />
-              <!-- Chick Beak -->
-              <polygon points="142,176 158,176 150,187" fill="#FF9F43" stroke="#D35400" stroke-width="2.5" stroke-linejoin="round" />
-              <!-- Chick Wings -->
-              <!-- Left Wing -->
-              <g class="chick-wing-left">
-                <path d="M 90,225 Q 55,215 65,235 Q 75,255 92,240 Z" fill="#FFEB60" stroke="#E59834" stroke-width="4" />
-              </g>
-              <!-- Right Wing -->
-              <g class="chick-wing-right">
-                <path d="M 210,225 Q 245,215 235,235 Q 225,255 208,240 Z" fill="#FFEB60" stroke="#E59834" stroke-width="4" />
-              </g>
-            </g>
-
-            <!-- Character Group: Panda -->
-            <g id="char-panda" class="char-group hide">
-              <!-- Panda Ears -->
-              <g class="panda-ears">
-                <circle cx="100" cy="115" r="26" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
-                <circle cx="200" cy="115" r="26" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
-              </g>
-              <!-- Panda Body -->
-              <path class="panda-body" d="M 90,240 Q 150,195 210,240 L 220,280 L 80,280 Z" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
-              <!-- Panda Head -->
-              <circle class="panda-head" cx="150" cy="170" r="62" fill="#FFFFFF" stroke="#2D3436" stroke-width="4" />
-              <!-- Panda Eye Patches -->
-              <ellipse cx="124" cy="170" rx="15" ry="19" transform="rotate(-15 124 170)" fill="#2D3436" />
-              <ellipse cx="176" cy="170" rx="15" ry="19" transform="rotate(15 176 170)" fill="#2D3436" />
-              <!-- Panda Muzzle/Nose/Mouth -->
-              <ellipse cx="150" cy="188" rx="20" ry="14" fill="#FFFFFF" stroke="#2D3436" stroke-width="2.5" />
-              <ellipse cx="150" cy="182" rx="7" ry="4.5" fill="#2D3436" />
-              <path d="M 144,188 Q 150,193 150,188 Q 150,193 156,188" fill="none" stroke="#2D3436" stroke-width="2.5" stroke-linecap="round" />
-              <!-- Panda Arms -->
-              <!-- Left Arm -->
-              <g class="panda-arm-left">
-                <path d="M 85,225 Q 50,205 60,230 Q 70,255 90,245 Z" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
-              </g>
-              <!-- Right Arm -->
-              <g class="panda-arm-right">
-                <path d="M 215,225 Q 250,205 240,230 Q 230,255 210,245 Z" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
-              </g>
-            </g>
-
-            <!-- Face Elements (Cheeks - Shared overlay) -->
-            <g class="face-overlay">
-              <circle cx="108" cy="188" r="10" fill="#FFAAA6" opacity="0.8" />
-              <circle cx="192" cy="188" r="10" fill="#FFAAA6" opacity="0.8" />
-            </g>
-
-            <!-- Shared Eyes (Cross-browser compatible with fallback colors & CSS overrides) -->
-            <g class="bear-face">
-              <!-- Normal Eyes -->
-              <g id="eye-normal" class="bear-eye">
-                <circle class="eye-main" cx="122" cy="168" r="6.5" fill="#4A2E1B" />
-                <circle class="eye-glint" cx="120" cy="165" r="2" fill="#FFFFFF" />
-                <circle class="eye-main" cx="178" cy="168" r="6.5" fill="#4A2E1B" />
-                <circle class="eye-glint" cx="176" cy="165" r="2" fill="#FFFFFF" />
-              </g>
-              <!-- Sleeping Eyes -->
-              <g id="eye-sleep" class="bear-eye hide">
-                <path class="eye-path" d="M 114,170 Q 122,176 130,170" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
-                <path class="eye-path" d="M 170,170 Q 178,176 186,170" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
-              </g>
-              <!-- Panic/Hurry Eyes -->
-              <g id="eye-panic" class="bear-eye hide">
-                <circle class="eye-main" cx="122" cy="168" r="8" fill="#4A2E1B" />
-                <circle class="eye-glint" cx="122" cy="168" r="3" fill="#FFFFFF" />
-                <circle class="eye-main" cx="178" cy="168" r="8" fill="#4A2E1B" />
-                <circle class="eye-glint" cx="178" cy="168" r="3" fill="#FFFFFF" />
-                <!-- Sweats -->
-                <path d="M 98,155 Q 94,160 92,165" fill="none" stroke="#85E3FF" stroke-width="3" stroke-linecap="round" />
-                <path d="M 202,155 Q 206,160 208,165" fill="none" stroke="#85E3FF" stroke-width="3" stroke-linecap="round" />
-              </g>
-              <!-- Happy/Cheering Eyes -->
-              <g id="eye-happy" class="bear-eye hide">
-                <path class="eye-path" d="M 114,172 Q 122,162 130,172" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
-                <path class="eye-path" d="M 170,172 Q 178,162 186,172" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
-              </g>
-            </g>
-
-            <!-- Accessories (Food: Bread / Spoon / Fork for Eating Theme) -->
-            <g id="bear-eating-tools" class="accessory hide">
-              <!-- Table / Plate -->
-              <ellipse cx="150" cy="275" rx="60" ry="12" fill="#FFF" stroke="#CCCCCC" stroke-width="2" />
-              <!-- Bakery roll (Koppepan) on plate -->
-              <path d="M 115,273 Q 150,250 185,273 Q 185,283 150,277 Q 115,283 115,273 Z" fill="#E8C39E" stroke="#A77A56" stroke-width="2" />
-              <path d="M 130,265 Q 150,262 170,265" fill="none" stroke="#A77A56" stroke-width="1.5" stroke-dasharray="3,3" />
-              
-              <!-- Spoon in Left Hand (Overlay) - Lowered -->
-              <g transform="translate(47, 193) rotate(-20)">
-                <path d="M 10,25 L 10,50" stroke="#B0C4DE" stroke-width="4" stroke-linecap="round" />
-                <ellipse cx="10" cy="22" rx="6" ry="9" fill="#B0C4DE" stroke="#778899" stroke-width="1.5" />
-              </g>
-
-              <!-- Fork in Right Hand (Overlay) - Lowered -->
-              <g transform="translate(230, 193) rotate(20)">
-                <path d="M 10,25 L 10,50" stroke="#B0C4DE" stroke-width="4" stroke-linecap="round" />
-                <path d="M 4,14 L 4,25 L 16,25 L 16,14 M 8,14 L 8,25 M 12,14 L 12,25" fill="none" stroke="#B0C4DE" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
-              </g>
-            </g>
+    <!-- ========================================================
+         VIEW 1: くまタイマー画面
+         ======================================================== -->
+    <div id="bear-timer-view">
+      <!-- Main Section (Timer and Character) -->
+      <main class="timer-main">
+        <div class="visual-container">
+          <!-- Circular Progress Track -->
+          <svg class="progress-ring" viewBox="0 0 320 320">
+            <circle class="progress-ring-bg" cx="160" cy="160" r="145" />
+            <circle id="progress-bar" class="progress-ring-bar" cx="160" cy="160" r="145" />
           </svg>
+
+          <!-- Bear SVG Character Area -->
+          <div id="bear-character" class="bear-character state-idle char-active-bear">
+            <!-- Zzz Sleeping Bubbles -->
+            <div class="zzz-container">
+              <span class="zzz z1">z</span>
+              <span class="zzz z2">z</span>
+              <span class="zzz z3">z</span>
+            </div>
+
+            <!-- Confetti for Cheering -->
+            <div class="confetti-container" id="confetti"></div>
+
+            <svg viewBox="0 0 300 300" width="100%" height="100%" class="bear-svg">
+              <!-- Bear Background Elements (Rainbow Bow/Hat) -->
+              <g id="bear-rainbow-hat" class="accessory hide">
+                <!-- Rainbow Party Hat -->
+                <polygon points="150,55 125,95 175,95" fill="#FF8B94" />
+                <circle cx="150" cy="50" r="8" fill="#FFF6B3" />
+                <path d="M 125,95 Q 150,105 175,95" fill="none" stroke="#FFF6B3" stroke-width="4" />
+                <!-- Rainbow stripes on hat -->
+                <path d="M 137,75 L 163,75" stroke="#FFF6B3" stroke-width="3" />
+                <path d="M 131,85 L 169,85" stroke="#85E3FF" stroke-width="3" />
+              </g>
+
+              <!-- Character Group: Bear -->
+              <g id="char-bear" class="char-group">
+                <!-- Bear Ears -->
+                <g class="bear-ears">
+                  <circle cx="100" cy="115" r="28" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
+                  <circle cx="100" cy="115" r="16" fill="#F8C4B4" />
+                  <circle cx="200" cy="115" r="28" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
+                  <circle cx="200" cy="115" r="16" fill="#F8C4B4" />
+                </g>
+                <!-- Bear Body -->
+                <path class="bear-body" d="M 90,240 Q 150,195 210,240 L 220,280 L 80,280 Z" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
+                <!-- Bear Head -->
+                <circle class="bear-head" cx="150" cy="170" r="62" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
+                <!-- Bear Muzzle/Nose/Mouth -->
+                <ellipse cx="150" cy="188" rx="24" ry="16" fill="#F5F2E7" stroke="#8D5524" stroke-width="2.5" />
+                <ellipse cx="150" cy="180" rx="8" ry="5" fill="#4A2E1B" />
+                <path d="M 144,186 Q 150,192 150,186 Q 150,192 156,186" fill="none" stroke="#4A2E1B" stroke-width="3" stroke-linecap="round" />
+                <!-- Bear Arms (Paws) -->
+                <!-- Left Arm -->
+                <g class="bear-arm-left">
+                  <path d="M 85,225 Q 50,205 60,230 Q 70,255 90,245 Z" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
+                  <circle cx="62" cy="225" r="8" fill="#F8C4B4" />
+                </g>
+                <!-- Right Arm -->
+                <g class="bear-arm-right">
+                  <path d="M 215,225 Q 250,205 240,230 Q 230,255 210,245 Z" fill="#C68B59" stroke="#8D5524" stroke-width="4" />
+                  <circle cx="238" cy="225" r="8" fill="#F8C4B4" />
+                </g>
+              </g>
+
+              <!-- Character Group: Chick -->
+              <g id="char-chick" class="char-group hide">
+                <!-- Chick Body -->
+                <path class="chick-body" d="M 90,240 Q 150,205 210,240 L 220,280 L 80,280 Z" fill="#FFEB60" stroke="#E59834" stroke-width="4" />
+                <!-- Chick Head -->
+                <circle class="chick-head" cx="150" cy="170" r="60" fill="#FFEB60" stroke="#E59834" stroke-width="4" />
+                <!-- Chick Beak -->
+                <polygon points="142,176 158,176 150,187" fill="#FF9F43" stroke="#D35400" stroke-width="2.5" stroke-linejoin="round" />
+                <!-- Chick Wings -->
+                <!-- Left Wing -->
+                <g class="chick-wing-left">
+                  <path d="M 90,225 Q 55,215 65,235 Q 75,255 92,240 Z" fill="#FFEB60" stroke="#E59834" stroke-width="4" />
+                </g>
+                <!-- Right Wing -->
+                <g class="chick-wing-right">
+                  <path d="M 210,225 Q 245,215 235,235 Q 225,255 208,240 Z" fill="#FFEB60" stroke="#E59834" stroke-width="4" />
+                </g>
+              </g>
+
+              <!-- Character Group: Panda -->
+              <g id="char-panda" class="char-group hide">
+                <!-- Panda Ears -->
+                <g class="panda-ears">
+                  <circle cx="100" cy="115" r="26" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
+                  <circle cx="200" cy="115" r="26" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
+                </g>
+                <!-- Panda Body -->
+                <path class="panda-body" d="M 90,240 Q 150,195 210,240 L 220,280 L 80,280 Z" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
+                <!-- Panda Head -->
+                <circle class="panda-head" cx="150" cy="170" r="62" fill="#FFFFFF" stroke="#2D3436" stroke-width="4" />
+                <!-- Panda Eye Patches -->
+                <ellipse cx="124" cy="170" rx="15" ry="19" transform="rotate(-15 124 170)" fill="#2D3436" />
+                <ellipse cx="176" cy="170" rx="15" ry="19" transform="rotate(15 176 170)" fill="#2D3436" />
+                <!-- Panda Muzzle/Nose/Mouth -->
+                <ellipse cx="150" cy="188" rx="20" ry="14" fill="#FFFFFF" stroke="#2D3436" stroke-width="2.5" />
+                <ellipse cx="150" cy="182" rx="7" ry="4.5" fill="#2D3436" />
+                <path d="M 144,188 Q 150,193 150,188 Q 150,193 156,188" fill="none" stroke="#2D3436" stroke-width="2.5" stroke-linecap="round" />
+                <!-- Panda Arms -->
+                <!-- Left Arm -->
+                <g class="panda-arm-left">
+                  <path d="M 85,225 Q 50,205 60,230 Q 70,255 90,245 Z" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
+                </g>
+                <!-- Right Arm -->
+                <g class="panda-arm-right">
+                  <path d="M 215,225 Q 250,205 240,230 Q 230,255 210,245 Z" fill="#2D3436" stroke="#1E272C" stroke-width="4" />
+                </g>
+              </g>
+
+              <!-- Face Elements (Cheeks - Shared overlay) -->
+              <g class="face-overlay">
+                <circle cx="108" cy="188" r="10" fill="#FFAAA6" opacity="0.8" />
+                <circle cx="192" cy="188" r="10" fill="#FFAAA6" opacity="0.8" />
+              </g>
+
+              <!-- Shared Eyes (Cross-browser compatible with fallback colors & CSS overrides) -->
+              <g class="bear-face">
+                <!-- Normal Eyes -->
+                <g id="eye-normal" class="bear-eye">
+                  <circle class="eye-main" cx="122" cy="168" r="6.5" fill="#4A2E1B" />
+                  <circle class="eye-glint" cx="120" cy="165" r="2" fill="#FFFFFF" />
+                  <circle class="eye-main" cx="178" cy="168" r="6.5" fill="#4A2E1B" />
+                  <circle class="eye-glint" cx="176" cy="165" r="2" fill="#FFFFFF" />
+                </g>
+                <!-- Sleeping Eyes -->
+                <g id="eye-sleep" class="bear-eye hide">
+                  <path class="eye-path" d="M 114,170 Q 122,176 130,170" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
+                  <path class="eye-path" d="M 170,170 Q 178,176 186,170" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
+                </g>
+                <!-- Panic/Hurry Eyes -->
+                <g id="eye-panic" class="bear-eye hide">
+                  <circle class="eye-main" cx="122" cy="168" r="8" fill="#4A2E1B" />
+                  <circle class="eye-glint" cx="122" cy="168" r="3" fill="#FFFFFF" />
+                  <circle class="eye-main" cx="178" cy="168" r="8" fill="#4A2E1B" />
+                  <circle class="eye-glint" cx="178" cy="168" r="3" fill="#FFFFFF" />
+                  <!-- Sweats -->
+                  <path d="M 98,155 Q 94,160 92,165" fill="none" stroke="#85E3FF" stroke-width="3" stroke-linecap="round" />
+                  <path d="M 202,155 Q 206,160 208,165" fill="none" stroke="#85E3FF" stroke-width="3" stroke-linecap="round" />
+                </g>
+                <!-- Happy/Cheering Eyes -->
+                <g id="eye-happy" class="bear-eye hide">
+                  <path class="eye-path" d="M 114,172 Q 122,162 130,172" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
+                  <path class="eye-path" d="M 170,172 Q 178,162 186,172" fill="none" stroke="#4A2E1B" stroke-width="4" stroke-linecap="round" />
+                </g>
+              </g>
+
+              <!-- Accessories (Food: Bread / Spoon / Fork for Eating Theme) -->
+              <g id="bear-eating-tools" class="accessory hide">
+                <!-- Table / Plate -->
+                <ellipse cx="150" cy="275" rx="60" ry="12" fill="#FFF" stroke="#CCCCCC" stroke-width="2" />
+                <!-- Bakery roll (Koppepan) on plate -->
+                <path d="M 115,273 Q 150,250 185,273 Q 185,283 150,277 Q 115,283 115,273 Z" fill="#E8C39E" stroke="#A77A56" stroke-width="2" />
+                <path d="M 130,265 Q 150,262 170,265" fill="none" stroke="#A77A56" stroke-width="1.5" stroke-dasharray="3,3" />
+                
+                <!-- Spoon in Left Hand (Overlay) - Lowered -->
+                <g transform="translate(47, 193) rotate(-20)">
+                  <path d="M 10,25 L 10,50" stroke="#B0C4DE" stroke-width="4" stroke-linecap="round" />
+                  <ellipse cx="10" cy="22" rx="6" ry="9" fill="#B0C4DE" stroke="#778899" stroke-width="1.5" />
+                </g>
+
+                <!-- Fork in Right Hand (Overlay) - Lowered -->
+                <g transform="translate(230, 193) rotate(20)">
+                  <path d="M 10,25 L 10,50" stroke="#B0C4DE" stroke-width="4" stroke-linecap="round" />
+                  <path d="M 4,14 L 4,25 L 16,25 L 16,14 M 8,14 L 8,25 M 12,14 L 12,25" fill="none" stroke="#B0C4DE" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Timer Numeric Display -->
+          <div class="time-display-wrapper">
+            <div id="time-display" class="time-display">10:00</div>
+          </div>
         </div>
+      </main>
 
-        <!-- Timer Numeric Display -->
-        <div class="time-display-wrapper">
-          <div id="time-display" class="time-display">10:00</div>
-        </div>
-      </div>
-    </main>
-
-    <!-- Right Sidebar containing Controls and Presets -->
-    <div class="sidebar-right">
-      <!-- Interactive Timer Controls -->
-      <section class="controls-section">
-        <div class="main-buttons">
-          <button id="btn-reset" class="control-btn btn-secondary" aria-label="リセット">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            <span>リセット</span>
-          </button>
-
-          <button id="btn-play-pause" class="control-btn btn-primary" aria-label="スタート">
-            <!-- Play Icon -->
-            <svg id="icon-play" viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            <!-- Pause Icon -->
-            <svg id="icon-pause" class="hide" viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            <span id="txt-play-pause">スタート</span>
-          </button>
-        </div>
-
-        <div class="settings-row">
-          <!-- Sound selection -->
-          <div class="audio-control">
-            <button id="btn-volume" class="sound-toggle-btn" aria-label="消音切替">
-              <svg id="icon-sound-on" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-              <svg id="icon-sound-off" class="hide" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      <!-- Right Sidebar containing Controls and Presets -->
+      <div class="sidebar-right">
+        <!-- Interactive Timer Controls -->
+        <section class="controls-section">
+          <div class="main-buttons">
+            <button id="btn-reset" class="control-btn btn-secondary" aria-label="リセット">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>リセット</span>
             </button>
-            <select id="select-alarm-sound" class="sound-select">
-              <option value="school-chime">🔔 がっこうのチャイム</option>
-              <option value="bell">⏰ めざましベル</option>
-              <option value="music-box">🎵 オルゴール</option>
-            </select>
+
+            <button id="btn-play-pause" class="control-btn btn-primary" aria-label="スタート">
+              <!-- Play Icon -->
+              <svg id="icon-play" viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <!-- Pause Icon -->
+              <svg id="icon-pause" class="hide" viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              <span id="txt-play-pause">スタート</span>
+            </button>
           </div>
 
-          <button id="btn-fullscreen" class="fullscreen-btn" aria-label="全画面表示">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-          </button>
+          <div class="settings-row">
+            <!-- Sound selection -->
+            <div class="audio-control">
+              <button id="btn-volume" class="sound-toggle-btn" aria-label="消音切替">
+                <svg id="icon-sound-on" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                <svg id="icon-sound-off" class="hide" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+              </button>
+              <select id="select-alarm-sound" class="sound-select">
+                <option value="school-chime">🔔 がっこうのチャイム</option>
+                <option value="bell">⏰ めざましベル</option>
+                <option value="music-box">🎵 オルゴール</option>
+              </select>
+            </div>
+
+            <button id="btn-fullscreen" class="fullscreen-btn" aria-label="全画面表示">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+          </div>
+
+          <!-- Character Selector -->
+          <div class="character-select-box">
+            <h3 class="char-select-title">キャラクターをえらぶ</h3>
+            <div class="char-options">
+              <button class="char-btn active" data-char="bear" aria-label="くま">🐻 <span>くま</span></button>
+              <button class="char-btn" data-char="chick" aria-label="ひよこ">🐥 <span>ひよこ</span></button>
+              <button class="char-btn" data-char="panda" aria-label="パンダ">🐼 <span>パンダ</span></button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Presets Section -->
+        <section class="presets-section">
+          <h2 class="section-title">かんたんじかん設定</h2>
+          
+          <!-- Grid containing 4 Preset Buttons -->
+          <div class="presets-grid" id="presets-grid-container">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Custom Adjuster -->
+          <div class="custom-adjuster">
+            <span class="adjuster-label">じぶんで決める：</span>
+            <div class="adjuster-controls">
+              <button id="adjust-min-down" class="adjust-btn">−</button>
+              <span id="custom-minutes" class="adjust-val">10</span>
+              <span class="adjust-unit">分</span>
+              <button id="adjust-min-up" class="adjust-btn">+</button>
+            </div>
+            <button id="btn-custom-set" class="btn-custom-apply">セットする</button>
+          </div>
+
+          <!-- Collapsible Preset Editor Panel -->
+          <div class="preset-editor-wrapper">
+            <button id="btn-toggle-editor" class="editor-toggle-btn" type="button">
+              ⚙️ プリセットをへんしゅうする
+            </button>
+            
+            <div id="preset-editor-panel" class="preset-editor-panel hidden">
+              <h3 class="editor-title">プリセットのへんしゅう</h3>
+              <form id="preset-editor-form" onsubmit="event.preventDefault();">
+                <!-- Row for Preset 1 -->
+                <div class="editor-row" data-index="0">
+                  <span class="row-num">1</span>
+                  <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🏃">
+                  <input type="text" class="edit-label" placeholder="なまえ" required value="やすみじかん">
+                  <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="10">
+                  <select class="edit-theme">
+                    <option value="default">つうじょう</option>
+                    <option value="rainbow">レインボー</option>
+                    <option value="lunch">きゅうしょく</option>
+                  </select>
+                </div>
+                
+                <!-- Row for Preset 2 -->
+                <div class="editor-row" data-index="1">
+                  <span class="row-num">2</span>
+                  <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🌈">
+                  <input type="text" class="edit-label" placeholder="なまえ" required value="レインボータイム">
+                  <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="15">
+                  <select class="edit-theme">
+                    <option value="default">つうじょう</option>
+                    <option value="rainbow" selected>レインボー</option>
+                    <option value="lunch">きゅうしょく</option>
+                  </select>
+                </div>
+                
+                <!-- Row for Preset 3 -->
+                <div class="editor-row" data-index="2">
+                  <span class="row-num">3</span>
+                  <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🍞">
+                  <input type="text" class="edit-label" placeholder="なまえ" required value="給食終了まであと">
+                  <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="20">
+                  <select class="edit-theme">
+                    <option value="default">つうじょう</option>
+                    <option value="rainbow">レインボー</option>
+                    <option value="lunch" selected>きゅうしょく</option>
+                  </select>
+                </div>
+                
+                <!-- Row for Preset 4 -->
+                <div class="editor-row" data-index="3">
+                  <span class="row-num">4</span>
+                  <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="⏱️">
+                  <input type="text" class="edit-label" placeholder="なまえ" required value="ミニワーク">
+                  <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="5">
+                  <select class="edit-theme">
+                    <option value="default" selected>つうじょう</option>
+                    <option value="rainbow">レインボー</option>
+                    <option value="lunch">きゅうしょく</option>
+                  </select>
+                </div>
+                
+                <button type="submit" class="btn-save-presets">設定をほぞんする</button>
+              </form>
+              
+              <!-- Force Reset Cache and LocalStorage -->
+              <div class="force-reset-container">
+                <button id="btn-force-reset" class="btn-force-reset" type="button">
+                  🔄 キャッシュと設定をリセット
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         VIEW 2: 自習用ステップタイマー画面
+         ======================================================== -->
+    <div id="step-timer-view">
+      <!-- SETUP PANEL -->
+      <section class="step-settings-panel" id="step-settings-panel">
+        <h2 class="step-setup-title">📖 自習用ステップタイマーの設定</h2>
+        
+        <form id="step-setup-form">
+          <div class="step-rows-container" id="step-rows-container">
+            <!-- Dynamic rows go here -->
+          </div>
+          
+          <div class="setup-actions" style="margin-top: 20px;">
+            <button class="btn-add-step" id="btn-add-step-row" type="button">
+              ➕ ステップを追加する
+            </button>
+            <button class="btn-start-step-timer" type="submit">
+              ▶️ タイマーを開始する
+            </button>
+          </div>
+        </form>
+        
+      </section>
+
+      <!-- RUNNING PANEL -->
+      <section class="step-running-panel hide" id="step-running-panel">
+        <div class="step-giant-display" id="step-giant-card">
+          <span class="step-giant-header">いまやること</span>
+          <h2 class="step-giant-task" id="current-step-label">計算ドリル</h2>
+          <div class="step-giant-timer" id="step-time-display">10:00</div>
+          <div class="step-total-time" id="step-total-time-display" style="display: none;">全体ののこり --:--</div>
         </div>
 
-        <!-- Character Selector -->
-        <div class="character-select-box">
-          <h3 class="char-select-title">キャラクターをえらぶ</h3>
-          <div class="char-options">
-            <button class="char-btn active" data-char="bear" aria-label="くま">🐻 <span>くま</span></button>
-            <button class="char-btn" data-char="chick" aria-label="ひよこ">🐥 <span>ひよこ</span></button>
-            <button class="char-btn" data-char="panda" aria-label="パンダ">🐼 <span>パンダ</span></button>
-          </div>
+        <div class="step-running-controls">
+          <button id="btn-step-reset" class="control-btn btn-secondary" aria-label="やりなおし" style="background-color: #FFFFFF; color: #0F172A; border-color: #CBD5E1;">
+            🔄 設定にもどる
+          </button>
+          <button id="btn-step-fullscreen" class="control-btn btn-secondary" aria-label="全画面表示" style="background-color: #FFFFFF; color: #0F172A; border-color: #CBD5E1;">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            <span>全画面にする</span>
+          </button>
+          <button id="btn-step-play-pause" class="control-btn btn-primary" aria-label="スタート" style="background-color: #0284c7;">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>スタート</span>
+          </button>
         </div>
       </section>
 
-      <!-- Presets Section -->
-      <section class="presets-section">
-        <h2 class="section-title">かんたんじかん設定</h2>
-        
-        <!-- Grid containing 4 Preset Buttons (updated dynamically by app.js) -->
-        <div class="presets-grid" id="presets-grid-container">
-          <button class="preset-card active" data-index="0">
-            <span class="preset-icon">🏃</span>
-            <span class="preset-name">やすみじかん</span>
-            <span class="preset-duration">10ぷん</span>
-          </button>
-          <button class="preset-card" data-index="1">
-            <span class="preset-icon">🌈</span>
-            <span class="preset-name">レインボー</span>
-            <span class="preset-duration">15ふん</span>
-          </button>
-          <button class="preset-card" data-index="2">
-            <span class="preset-icon">🍞</span>
-            <span class="preset-name">きゅうしょく</span>
-            <span class="preset-duration">20ふん</span>
-          </button>
-          <button class="preset-card" data-index="3">
-            <span class="preset-icon">⏱️</span>
-            <span class="preset-name">ミニワーク</span>
-            <span class="preset-duration">5ふん</span>
-          </button>
-        </div>
-
-        <!-- Custom Adjuster -->
-        <div class="custom-adjuster">
-          <span class="adjuster-label">じぶんで決める：</span>
-          <div class="adjuster-controls">
-            <button id="adjust-min-down" class="adjust-btn">−</button>
-            <span id="custom-minutes" class="adjust-val">10</span>
-            <span class="adjust-unit">分</span>
-            <button id="adjust-min-up" class="adjust-btn">+</button>
-          </div>
-          <button id="btn-custom-set" class="btn-custom-apply">セットする</button>
-        </div>
-
-        <!-- Collapsible Preset Editor Panel -->
-        <div class="preset-editor-wrapper">
-          <button id="btn-toggle-editor" class="editor-toggle-btn" type="button">
-            ⚙️ プリセットをへんしゅうする
-          </button>
-          
-          <div id="preset-editor-panel" class="preset-editor-panel hidden">
-            <h3 class="editor-title">プリセットのへんしゅう</h3>
-            <form id="preset-editor-form" onsubmit="event.preventDefault();">
-              <!-- Row for Preset 1 -->
-              <div class="editor-row" data-index="0">
-                <span class="row-num">1</span>
-                <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🏃">
-                <input type="text" class="edit-label" placeholder="なまえ" required value="やすみじかん">
-                <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="10">
-                <select class="edit-theme">
-                  <option value="default">つうじょう</option>
-                  <option value="rainbow">レインボー</option>
-                  <option value="lunch">きゅうしょく</option>
-                </select>
-              </div>
-              
-              <!-- Row for Preset 2 -->
-              <div class="editor-row" data-index="1">
-                <span class="row-num">2</span>
-                <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🌈">
-                <input type="text" class="edit-label" placeholder="なまえ" required value="レインボータイム">
-                <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="15">
-                <select class="edit-theme">
-                  <option value="default">つうじょう</option>
-                  <option value="rainbow" selected>レインボー</option>
-                  <option value="lunch">きゅうしょく</option>
-                </select>
-              </div>
-              
-              <!-- Row for Preset 3 -->
-              <div class="editor-row" data-index="2">
-                <span class="row-num">3</span>
-                <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="🍞">
-                <input type="text" class="edit-label" placeholder="なまえ" required value="給食終了まであと">
-                <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="20">
-                <select class="edit-theme">
-                  <option value="default">つうじょう</option>
-                  <option value="rainbow">レインボー</option>
-                  <option value="lunch" selected>きゅうしょく</option>
-                </select>
-              </div>
-              
-              <!-- Row for Preset 4 -->
-              <div class="editor-row" data-index="3">
-                <span class="row-num">4</span>
-                <input type="text" class="edit-emoji" placeholder="絵" maxlength="2" title="絵文字" value="⏱️">
-                <input type="text" class="edit-label" placeholder="なまえ" required value="ミニワーク">
-                <input type="number" class="edit-time" placeholder="分" min="1" max="120" required value="5">
-                <select class="edit-theme">
-                  <option value="default" selected>つうじょう</option>
-                  <option value="rainbow">レインボー</option>
-                  <option value="lunch">きゅうしょく</option>
-                </select>
-              </div>
-              
-              <button type="submit" class="btn-save-presets">設定をほぞんする</button>
-            </form>
-            
-            <!-- Force Reset Cache and LocalStorage -->
-            <div class="force-reset-container">
-              <button id="btn-force-reset" class="btn-force-reset" type="button">
-                🔄 キャッシュと設定をリセット
-              </button>
-            </div>
-          </div>
+      <!-- FLOW PROGRESS LIST -->
+      <section class="step-flow-panel hide" id="step-flow-panel">
+        <h3 class="flow-title">📋 きょうの流れ（全体工程）</h3>
+        <div class="flow-list" id="step-flow-container">
+          <!-- Dynamic progress flow list goes here -->
         </div>
       </section>
     </div>

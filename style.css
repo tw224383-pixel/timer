@@ -1,7 +1,6 @@
 /* ==========================================
-   学校用くまタイマー - スタイルシート
+   共通のスタイル定義
    ========================================== */
-
 :root {
   /* Colors */
   --bg-color: #FAF7F0;
@@ -96,6 +95,10 @@ body {
 /* Header */
 .app-header {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .timer-title {
@@ -105,6 +108,45 @@ body {
   color: var(--text-main);
   text-shadow: 0 3px 0 #FFFFFF;
   transition: color 0.3s ease;
+}
+
+/* Mode Switch Button */
+.btn-switch-mode {
+  background-color: #E0F2FE;
+  color: #0369A1;
+  border: 3px solid #FFFFFF;
+  padding: 8px 20px;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 900;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.btn-switch-mode:hover {
+  background-color: #BAE6FD;
+  transform: translateY(-2px);
+}
+
+.btn-switch-mode:active {
+  transform: scale(0.97);
+}
+
+/* ==========================================
+   くまタイマー用スタイル
+   ========================================== */
+#bear-timer-view {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
 }
 
 /* Main Area - Adapt for iPad orientation */
@@ -328,6 +370,7 @@ body {
   letter-spacing: 0.02em;
   text-shadow: 1px 1px 0 #fff;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Controls Section */
@@ -619,91 +662,6 @@ body {
 .btn-custom-apply:active {
   transform: scale(0.95);
 }
-
-/* ==========================================
-   Responsive iPad / Landscape layouts
-   ========================================== */
-
-/* Landscape View (iPad wide layout) */
-@media (min-width: 768px) and (orientation: landscape) {
-  .app-container {
-    padding: 40px;
-    gap: 30px;
-  }
-  
-  .timer-title {
-    font-size: 2.6rem;
-  }
-
-  /* Two columns layout */
-  .app-container {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    grid-template-rows: auto 1fr;
-    align-items: center;
-  }
-  
-  .app-header {
-    grid-column: 1 / span 2;
-    text-align: left;
-    padding-left: 20px;
-  }
-  
-  .timer-main {
-    grid-column: 1;
-    grid-row: 2;
-    justify-content: center;
-  }
-  
-  .visual-container {
-    width: 360px;
-    height: 360px;
-  }
-  
-  .progress-ring-bg, .progress-ring-bar {
-    stroke-width: 18;
-  }
-  
-  .bear-character {
-    width: 240px;
-    height: 240px;
-  }
-  
-  .time-display-wrapper {
-    bottom: 15px;
-    padding: 8px 30px;
-  }
-  
-  .time-display {
-    font-size: 4rem;
-  }
-  
-  .sidebar-right {
-    grid-column: 2;
-    grid-row: 2;
-    align-self: start;
-    padding: 0 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-}
-
-/* Fullscreen overlay mode */
-:fullscreen .app-container,
-:-webkit-full-screen .app-container {
-  border: none;
-  border-radius: 0;
-  max-width: 100vw;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  background: var(--bg-color);
-}
-
-/* ==========================================
-   Character Selection and Multiple Characters Styles
-   ========================================== */
 
 /* Character Selection Panel */
 .character-select-box {
@@ -1034,4 +992,612 @@ body {
 
 .btn-force-reset:active {
   transform: scale(0.97);
+}
+
+/* ==========================================
+   自習用ステップタイマースタイル
+   ========================================== */
+
+/* View Toggling Container Mode */
+.view-step-timer #bear-timer-view {
+  display: none !important;
+}
+
+.view-step-timer #step-timer-view {
+  display: flex !important;
+}
+
+#step-timer-view {
+  display: none; /* hidden by default */
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+}
+
+/* Step Settings Panel */
+.step-settings-panel {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 30px;
+  padding: 24px;
+  border: 4px solid #FFFFFF;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.step-setup-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0F172A;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-rows-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-setup-row {
+  display: grid;
+  grid-template-columns: 24px 1.5fr 1fr 50px;
+  gap: 10px;
+  align-items: center;
+  background: #FFFFFF;
+  padding: 8px 14px;
+  border-radius: 18px;
+  border: 2.5px solid var(--border-color);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+}
+
+.step-setup-row .step-num {
+  font-family: 'Outfit', var(--font-family);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.step-setup-row input {
+  height: 40px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0 10px;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0F172A;
+  background-color: #FFFFFF;
+}
+
+.step-setup-row input:focus {
+  border-color: #0284c7;
+  outline: none;
+}
+
+.step-setup-row .input-step-time {
+  text-align: center;
+}
+
+.btn-delete-row {
+  background: #FFF1F2;
+  border: 2px solid #FFE4E6;
+  color: #E11D48;
+  border-radius: 12px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+}
+
+.btn-delete-row:hover {
+  background: #FFE4E6;
+  border-color: #FDA4AF;
+}
+
+.setup-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-add-step {
+  background-color: #F0FDF4;
+  color: #166534;
+  border: 3px solid #FFFFFF;
+  border-radius: 18px;
+  padding: 12px 20px;
+  font-family: var(--font-family);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.04);
+  transition: all 0.2s;
+}
+
+.btn-add-step:hover {
+  background-color: #DCFCE7;
+  transform: translateY(-2px);
+}
+
+.btn-start-step-timer {
+  background-color: #0284c7;
+  color: #FFFFFF;
+  border: 3px solid #FFFFFF;
+  border-radius: 18px;
+  padding: 12px 20px;
+  font-family: var(--font-family);
+  font-size: 1.1rem;
+  font-weight: 900;
+  cursor: pointer;
+  flex: 1.2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 6px 12px rgba(2, 132, 199, 0.2);
+  transition: all 0.2s;
+}
+
+.btn-start-step-timer:hover {
+  background-color: #0369a1;
+  transform: translateY(-2px);
+}
+
+/* Step Running Panel */
+.step-running-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+  width: 100%;
+}
+
+.step-giant-display {
+  width: 100%;
+  background: #FFFFFF;
+  border: 6px solid #FFFFFF;
+  border-radius: 36px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.step-giant-header {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #64748B;
+  letter-spacing: 0.1em;
+}
+
+.step-giant-task {
+  font-size: 3.4rem;
+  font-weight: 900;
+  color: #0F172A;
+  background: #F1F5F9;
+  padding: 8px 30px;
+  border-radius: 20px;
+  border: 3.5px solid #E2E8F0;
+  width: fit-content;
+  max-width: 90%;
+  word-wrap: break-word;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.step-giant-timer {
+  font-family: 'Outfit', var(--font-family);
+  font-size: 7.5rem;
+  font-weight: 800;
+  color: #0284c7;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-shadow: 0 4px 0 #FFFFFF, 0 8px 24px rgba(2, 132, 199, 0.15);
+  margin: 10px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.step-total-time {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #64748B;
+  background: #F8FAFC;
+  padding: 10px 30px;
+  border-radius: 20px;
+  border: 2px solid #E2E8F0;
+  margin-top: 10px;
+  font-variant-numeric: tabular-nums;
+  display: none;
+}
+
+/* Finished state banner */
+.step-giant-display.all-finished .step-giant-timer {
+  font-size: 4rem;
+  color: #10B981;
+}
+
+.step-giant-display.all-finished .step-giant-task {
+  background: #ECFDF5;
+  color: #065F46;
+  border-color: #A7F3D0;
+}
+
+.step-running-controls {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Progress List ("きょうの流れ") */
+.step-flow-panel {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border: 4px solid #FFFFFF;
+  border-radius: 28px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+}
+
+.flow-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #475569;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.flow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flow-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #FFFFFF;
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  transition: all 0.3s;
+}
+
+.flow-item.done {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+  color: #94A3B8;
+}
+
+.flow-item.done .flow-task-name {
+  text-decoration: line-through;
+}
+
+.flow-item.active {
+  background: #E0F2FE;
+  border-color: #0284c7;
+  color: #0369A1;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+  transform: scale(1.02);
+  animation: flow-pulse 2s infinite alternate;
+}
+
+@keyframes flow-pulse {
+  0% { border-color: #0284c7; }
+  100% { border-color: #38bdf8; box-shadow: 0 4px 16px rgba(2, 132, 199, 0.18); }
+}
+
+.flow-item.active .flow-task-name {
+  font-weight: 900;
+}
+
+.flow-item.pending {
+  color: #475569;
+}
+
+.flow-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.flow-idx {
+  font-family: 'Outfit', var(--font-family);
+  font-weight: 800;
+  background: #F1F5F9;
+  color: #64748B;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.flow-item.active .flow-idx {
+  background: #0284c7;
+  color: #FFFFFF;
+}
+
+.flow-item.done .flow-idx {
+  background: #E2E8F0;
+  color: #94A3B8;
+}
+
+.flow-task-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.flow-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.flow-item.done .flow-badge {
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+.flow-item.active .flow-badge {
+  background: #0284c7;
+  color: #FFFFFF;
+}
+
+.flow-item.pending .flow-badge {
+  background: #F1F5F9;
+  color: #475569;
+}
+
+/* High Contrast mode modifications when step timer view is active */
+body.mode-step-timer {
+  background-color: #F1F5F9;
+  --text-main: #0F172A;
+  --text-muted: #475569;
+  --border-color: #CBD5E1;
+}
+
+/* ==========================================
+   レスポンシブ配置 - iPad / 横長画面
+   ========================================== */
+
+/* Landscape View (iPad wide layout) */
+@media (min-width: 768px) and (orientation: landscape) {
+  .app-container {
+    padding: 40px;
+    gap: 30px;
+  }
+  
+  .timer-title {
+    font-size: 2.6rem;
+  }
+
+  /* Two columns layout */
+  .app-container {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: center;
+  }
+  
+  .app-header {
+    grid-column: 1 / span 2;
+    text-align: left;
+    padding-left: 20px;
+    align-items: flex-start;
+  }
+  
+  #bear-timer-view {
+    display: contents !important;
+  }
+  
+  .timer-main {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: center;
+  }
+  
+  .visual-container {
+    width: 360px;
+    height: 360px;
+  }
+  
+  .progress-ring-bg, .progress-ring-bar {
+    stroke-width: 18;
+  }
+  
+  .bear-character {
+    width: 240px;
+    height: 240px;
+  }
+  
+  .time-display-wrapper {
+    bottom: 15px;
+    padding: 8px 30px;
+  }
+  
+  .time-display {
+    font-size: 4rem;
+  }
+  
+  .sidebar-right {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Step Timer grid overrides in Landscape */
+  .view-step-timer .app-container {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 20px;
+  }
+  
+  .view-step-timer #step-timer-view {
+    display: contents !important;
+  }
+  
+  .view-step-timer .app-header {
+    grid-column: 1 / span 2;
+  }
+
+  .view-step-timer .step-settings-panel {
+    grid-column: 1 / span 2;
+  }
+  
+  .view-step-timer .step-running-panel {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  
+  .view-step-timer .step-flow-panel {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0;
+    height: 100%;
+  }
+  
+  .view-step-timer .step-giant-timer {
+    font-size: 9rem;
+  }
+}
+
+/* Fullscreen overlay mode */
+.app-container:fullscreen,
+.app-container:-webkit-full-screen {
+  border: none !important;
+  border-radius: 0 !important;
+  max-width: 100vw !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 30px !important;
+  background-color: #F1F5F9 !important; /* Soft slate high contrast background */
+  box-sizing: border-box;
+}
+
+/* Hide header in fullscreen so we have more space for the timer & flow */
+.app-container:fullscreen .app-header,
+.app-container:-webkit-full-screen .app-header {
+  display: none !important;
+}
+
+/* In fullscreen step timer, adjust the grid */
+.view-step-timer .app-container:fullscreen,
+.view-step-timer .app-container:-webkit-full-screen {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 40px;
+  align-items: stretch;
+}
+
+.view-step-timer .app-container:fullscreen #step-timer-view,
+.view-step-timer .app-container:-webkit-full-screen #step-timer-view {
+  display: contents !important;
+}
+
+.view-step-timer .app-container:fullscreen .step-running-panel,
+.view-step-timer .app-container:-webkit-full-screen .step-running-panel {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: none;
+}
+
+.view-step-timer .app-container:fullscreen .step-flow-panel,
+.view-step-timer .app-container:-webkit-full-screen .step-flow-panel {
+  grid-column: 2;
+  grid-row: 1;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Giant Display inside fullscreen */
+.view-step-timer .app-container:fullscreen .step-giant-display,
+.view-step-timer .app-container:-webkit-full-screen .step-giant-display {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #FFFFFF;
+  padding: 40px;
+  border-radius: 40px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+  border: none;
+}
+
+.view-step-timer .app-container:fullscreen .step-giant-timer,
+.view-step-timer .app-container:-webkit-full-screen .step-giant-timer {
+  font-size: 12vw;
+  margin: 20px 0;
+  color: #0284c7;
+  line-height: 1;
+}
+
+.view-step-timer .app-container:fullscreen .step-giant-task,
+.view-step-timer .app-container:-webkit-full-screen .step-giant-task {
+  font-size: 4vw;
+  padding: 20px 50px;
+  border-radius: 30px;
+  border-width: 4px;
+  max-width: 95%;
+  text-align: center;
+}
+
+.view-step-timer .app-container:fullscreen .step-giant-header,
+.view-step-timer .app-container:-webkit-full-screen .step-giant-header {
+  font-size: 2.5rem;
+}
+
+.view-step-timer .app-container:fullscreen .step-total-time,
+.view-step-timer .app-container:-webkit-full-screen .step-total-time {
+  display: inline-block !important;
+  font-size: 2.5rem;
+}
+
+.view-step-timer .app-container:fullscreen .step-running-controls,
+.view-step-timer .app-container:-webkit-full-screen .step-running-controls {
+  margin-top: 30px;
+  width: 100%;
+  justify-content: center;
+}
+
+.view-step-timer .app-container:fullscreen .flow-list,
+.view-step-timer .app-container:-webkit-full-screen .flow-list {
+  flex: 1;
+  overflow-y: auto;
 }
